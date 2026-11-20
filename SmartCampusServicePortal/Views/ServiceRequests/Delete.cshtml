@@ -1,0 +1,52 @@
+@model SmartCampusServicePortal.Models.ServiceRequest
+@{
+    ViewData["Title"] = "Delete Service Request";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card border-0 shadow-sm border-top border-danger border-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h4 class="fw-bold mb-0 text-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Service Request
+                </h4>
+                <small class="text-muted">Are you sure you want to permanently delete this service request?</small>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-danger">
+                    <strong>Warning:</strong> This action cannot be undone. Request #@Model.Id will be removed from the database.
+                </div>
+
+                <dl class="row mb-4">
+                    <dt class="col-sm-4 text-muted">Ticket ID:</dt>
+                    <dd class="col-sm-8 fw-bold">#@Model.Id</dd>
+
+                    <dt class="col-sm-4 text-muted">Student:</dt>
+                    <dd class="col-sm-8">@Model.StudentName (@(Model.StudentRollNo ?? "N/A"))</dd>
+
+                    <dt class="col-sm-4 text-muted">Category:</dt>
+                    <dd class="col-sm-8">@Model.Category</dd>
+
+                    <dt class="col-sm-4 text-muted">Description:</dt>
+                    <dd class="col-sm-8">@Model.Description</dd>
+
+                    <dt class="col-sm-4 text-muted">Status:</dt>
+                    <dd class="col-sm-8"><span class="badge bg-secondary">@Model.Status</span></dd>
+                </dl>
+
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="bi bi-trash-fill me-1"></i> Delete Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

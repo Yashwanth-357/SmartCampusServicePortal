@@ -1,0 +1,144 @@
+@model IEnumerable<SmartCampusServicePortal.Models.ServiceRequest>
+@{
+    ViewData["Title"] = "Admin Management Portal";
+    string selectedCat = ViewBag.SelectedCategory as string ?? "All";
+    string selectedStat = ViewBag.SelectedStatus as string ?? "All";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pb-3 mb-4 border-bottom">
+    <div>
+        <h2 class="h3 fw-bold text-dark mb-1">
+            <i class="bi bi-shield-lock-fill text-primary me-2"></i>Admin Management Portal
+        </h2>
+        <p class="text-muted mb-0">Review student campus requests, filter by department, and update resolution status</p>
+    </div>
+    <div class="mt-3 mt-md-0">
+        <span class="badge bg-primary fs-6 px-3 py-2">
+            <i class="bi bi-card-checklist me-1"></i> Total Displayed: @(Model?.Count() ?? 0)
+        </span>
+    </div>
+</div>
+
+<!-- Filters Form -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form asp-action="Index" method="get" class="row g-3 align-items-end">
+            <!-- Category Filter -->
+            <div class="col-12 col-md-4">
+                <label for="category" class="form-label fw-semibold small text-muted text-uppercase">
+                    <i class="bi bi-filter me-1"></i> Filter by Category
+                </label>
+                <select id="category" name="category" class="form-select">
+                    <option value="All" selected="@(selectedCat == "All")">-- All Categories --</option>
+                    <option value="IT Support" selected="@(selectedCat == "IT Support")">IT Support</option>
+                    <option value="Hostel" selected="@(selectedCat == "Hostel")">Hostel</option>
+                    <option value="Library" selected="@(selectedCat == "Library")">Library</option>
+                    <option value="Maintenance" selected="@(selectedCat == "Maintenance")">Maintenance</option>
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="col-12 col-md-4">
+                <label for="status" class="form-label fw-semibold small text-muted text-uppercase">
+                    <i class="bi bi-clock-history me-1"></i> Filter by Status
+                </label>
+                <select id="status" name="status" class="form-select">
+                    <option value="All" selected="@(selectedStat == "All")">-- All Statuses --</option>
+                    <option value="Pending" selected="@(selectedStat == "Pending")">Pending</option>
+                    <option value="In Progress" selected="@(selectedStat == "In Progress")">In Progress</option>
+                    <option value="Completed" selected="@(selectedStat == "Completed")">Completed</option>
+                </select>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="col-12 col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="bi bi-funnel me-1"></i> Apply Filters
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-clockwise"></i> Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- All Requests Table for Admin -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ticket</th>
+                        <th>Student Name</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Date Submitted</th>
+                        <th>Current Status</th>
+                        <th>Admin Remarks</th>
+                        <th class="text-end">Update Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold text-primary">#@item.Id</td>
+                                <td>
+                                    <div class="fw-semibold">@item.StudentName</div>
+                                    <small class="text-muted">@(item.StudentRollNo ?? "—")</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@item.Category</span>
+                                </td>
+                                <td>
+                                    <span class="d-inline-block text-truncate" style="max-width: 220px;" title="@item.Description">
+                                        @item.Description
+                                    </span>
+                                </td>
+                                <td class="text-muted small">
+                                    @item.SubmissionDate.ToString("dd MMM yyyy")
+                                </td>
+                                <td>
+                                    @if (item.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-hourglass me-1"></i>Pending</span>
+                                    }
+                                    else if (item.Status == "In Progress")
+                                    {
+                                        <span class="badge bg-primary"><i class="bi bi-arrow-repeat me-1"></i>In Progress</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check2-circle me-1"></i>Completed</span>
+                                    }
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        @(string.IsNullOrEmpty(item.AdminRemarks) ? "—" : item.AdminRemarks)
+                                    </small>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-action="UpdateStatus" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Change Status
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                No requests found matching the selected filter criteria.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

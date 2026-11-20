@@ -1,0 +1,56 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #2b3035;
+  background-color: #f8f9fa;
+}
+
+/* Card hover and elevation */
+.dashboard-card {
+  transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border-radius: 0.75rem;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Status badges */
+.badge-status-pending {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.badge-status-inprogress {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.badge-status-completed {
+  background-color: #198754;
+  color: #fff;
+}
+
+/* Tables */
+.table th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Form controls */
+.form-control:focus, .form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}

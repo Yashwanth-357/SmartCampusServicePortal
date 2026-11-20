@@ -1,0 +1,83 @@
+@model SmartCampusServicePortal.Models.StatusUpdateDto
+@{
+    ViewData["Title"] = "Update Request Status";
+    var request = ViewBag.Request as SmartCampusServicePortal.Models.ServiceRequest;
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h4 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-shield-check me-2 text-primary"></i>Update Service Request Status
+                </h4>
+                <small class="text-muted">Administrator resolution and status update panel</small>
+            </div>
+            <div class="card-body p-4">
+                @if (request != null)
+                {
+                    <div class="bg-light p-3 rounded mb-4 border">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-primary">Ticket #@request.Id</span>
+                            <span class="badge bg-secondary">@request.Category</span>
+                        </div>
+                        <div class="small mb-1"><strong>Student:</strong> @request.StudentName (@(request.StudentRollNo ?? "N/A"))</div>
+                        <div class="small mb-2"><strong>Issue:</strong> @request.Description</div>
+                        <div class="small">
+                            <strong>Current Status:</strong>
+                            @if (request.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (request.Status == "In Progress")
+                            {
+                                <span class="badge bg-primary">In Progress</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Completed</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <form asp-action="UpdateStatus" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <!-- New Status Dropdown -->
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label fw-semibold">New Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Pending">Pending (Awaiting assignment)</option>
+                            <option value="In Progress">In Progress (Staff is actively working)</option>
+                            <option value="Completed">Completed (Issue resolved)</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Admin Remarks -->
+                    <div class="mb-4">
+                        <label asp-for="AdminRemarks" class="form-label fw-semibold">Admin Remarks / Resolution Note</label>
+                        <textarea asp-for="AdminRemarks" class="form-control" rows="3" placeholder="Enter notes, technician assigned, or resolution details..."></textarea>
+                        <span asp-validation-for="AdminRemarks" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg me-1"></i> Save Status Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

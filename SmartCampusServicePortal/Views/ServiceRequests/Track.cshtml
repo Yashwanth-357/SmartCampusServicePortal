@@ -1,0 +1,129 @@
+@model List<SmartCampusServicePortal.Models.ServiceRequest>
+@{
+    ViewData["Title"] = "Track Request Status";
+}
+
+<div class="pb-3 mb-4 border-bottom">
+    <h2 class="h3 fw-bold text-dark mb-1">Track Service Request Status</h2>
+    <p class="text-muted mb-0">Check real-time progress and updates on your submitted campus service requests</p>
+</div>
+
+<!-- Search Box -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <form asp-action="Track" method="get" class="row g-3">
+            <div class="col-12 col-md-8">
+                <label for="query" class="form-label fw-semibold">Enter Request Ticket ID or Student Roll No / Name</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" id="query" name="query" class="form-control" placeholder="e.g. 1, 2, STU101, or Rahul Sharma" value="@Context.Request.Query["query"]" required />
+                </div>
+            </div>
+            <div class="col-12 col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100 py-2">
+                    <i class="bi bi-radar me-1"></i> Track Status
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-warning shadow-sm">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.ErrorMessage
+    </div>
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+                        <span class="fw-bold text-primary fs-5">Ticket #@item.Id</span>
+                        @if (item.Status == "Pending")
+                        {
+                            <span class="badge bg-warning text-dark px-3 py-2"><i class="bi bi-hourglass me-1"></i>Pending Review</span>
+                        }
+                        else if (item.Status == "In Progress")
+                        {
+                            <span class="badge bg-primary px-3 py-2"><i class="bi bi-gear-wide-connected me-1"></i>In Progress</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold text-dark mb-1">@item.Category</h6>
+                        <p class="text-secondary small mb-3">@item.Description</p>
+
+                        <!-- Progress Bar Visual Tracker -->
+                        <div class="mb-3">
+                            <label class="small text-muted fw-semibold mb-1">Status Progress:</label>
+                            @if (item.Status == "Pending")
+                            {
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 30%;"></div>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small mt-1">
+                                    <span class="fw-bold text-warning">Submitted</span>
+                                    <span>In Progress</span>
+                                    <span>Completed</span>
+                                </div>
+                            }
+                            else if (item.Status == "In Progress")
+                            {
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;"></div>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small mt-1">
+                                    <span class="text-success">Submitted</span>
+                                    <span class="fw-bold text-primary">In Progress</span>
+                                    <span>Completed</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%;"></div>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small mt-1">
+                                    <span class="text-success">Submitted</span>
+                                    <span class="text-success">In Progress</span>
+                                    <span class="fw-bold text-success">Completed</span>
+                                </div>
+                            }
+                        </div>
+
+                        <hr />
+
+                        <div class="small">
+                            <div><strong>Student:</strong> @item.StudentName @(string.IsNullOrEmpty(item.StudentRollNo) ? "" : $"({item.StudentRollNo})")</div>
+                            <div><strong>Submitted On:</strong> @item.SubmissionDate.ToString("dd MMM yyyy, hh:mm tt")</div>
+                            <div class="mt-2">
+                                <strong>Admin Remarks:</strong>
+                                @if (!string.IsNullOrEmpty(item.AdminRemarks))
+                                {
+                                    <span class="text-dark bg-light px-2 py-1 rounded border d-inline-block mt-1">@item.AdminRemarks</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Pending administration update</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top text-end">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                            Full Ticket Details <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
